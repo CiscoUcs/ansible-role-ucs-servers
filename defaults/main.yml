@@ -1,0 +1,63 @@
+---
+# defaults file for ucs-servers
+# Default values are based on the FlexPod Datacenter with Docker EE Cisco Validated Design (CVD).
+# The CVD is available at https://www.cisco.com/c/en/us/td/docs/unified_computing/ucs/UCS_CVDs/flexpod_docker_deploy_design.html.
+# Default UCS Manager login information can be used with the Cisco demo Cloud UCS 3.2 environment: https://dcloud-cms.cisco.com/demo/cisco-ucs-3-2-v1.
+
+# login information
+ucs_hostname: 198.18.0.10
+ucs_username: 'ucs-dCloud\demouser'
+ucs_password: C1sco12345
+ucs_state: present
+
+# Docker EE CVD Server related settings
+ucs_servers_data:
+  uuid_pools:
+  - name: UUID-Pool
+    order: sequential
+    first_uuid: 0000-000000000001
+    last_uuid: 0000-000000000078
+  service_profile_templates:
+  - name: Docker-Host-FC-A
+    template_type: updating-template
+    uuid_pool: UUID-Pool
+    lan_connectivity_policy: Cntr-FC-Boot
+    san_connectivity_policy: Cntr-FC-Boot
+    boot_policy: Boot-FC-Cntr
+    maintenance_policy: default
+    server_pool: Container-Pool
+    power_state: down
+    host_firmware_package: default
+    bios_policy: Cntr-Host
+    power_control_policy: No-Power-Cap
+  service_profiles_from_templates:
+  - name: Docker-Host-01
+    source_template: Docker-Host-FC-A
+    user_label: UCP-Ctrl-1
+  - name: Docker-Host-02
+    source_template: Docker-Host-FC-A
+    user_label: UCP-Ctrl-2
+  - name: Docker-Host-03
+    source_template: Docker-Host-FC-A
+    user_label: UCP-Ctrl-3
+  - name: Docker-Host-04
+    source_template: Docker-Host-FC-A
+    user_label: UCP-DTR-1
+  - name: Docker-Host-05
+    source_template: Docker-Host-FC-A
+    user_label: UCP-DTR-2
+  - name: Docker-Host-06
+    source_template: Docker-Host-FC-A
+    user_label: UCP-DTR-3
+  - name: Docker-Host-07
+    source_template: Docker-Host-FC-A
+    user_label: UCP-Node-1
+  - name: Docker-Host-08
+    source_template: Docker-Host-FC-A
+    user_label: UCP-Node-2
+  - name: Docker-Host-09
+    source_template: Docker-Host-FC-A
+    user_label: UCP-Node-3
+  - name: Docker-Host-10
+    source_template: Docker-Host-FC-A
+    user_label: UCP-Node-4

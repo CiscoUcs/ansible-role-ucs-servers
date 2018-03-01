@@ -1,0 +1,4 @@
+---
+- hosts: localhost
+  roles:
+    - CiscoUcs.ucs-servers
