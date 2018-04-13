@@ -10,6 +10,13 @@
       state: "{{ ucs_state }}"
 
   block:
+  - name: Configure Boot Policies
+    ucs_managed_objects:
+      <<: *login_info
+      objects: "{{ item.objects }}" 
+    when: item.objects is defined
+    with_items: "{{ ucs_boot_policies }}"
+
   - name: Configure UUID Suffix Pool
     ucs_uuid_pool:
       <<: *login_info
@@ -18,7 +25,7 @@
       first_uuid: "{{ item.first_uuid }}"
       last_uuid: "{{ item.last_uuid }}"
     when: item.name is defined
-    with_items: "{{ ucs_servers_data.uuid_pools }}"
+    with_items: "{{ ucs_uuid_pools }}"
 
   - name: Configure Service Profile Templates
     ucs_service_profile_template:
@@ -49,7 +56,7 @@
       graphics_card_policy: "{{ item.graphics_card_policy | default(omit) }}"
       user_label: "{{ item.user_label | default(omit) }}"
     when: item.name is defined
-    with_items: "{{ ucs_servers_data.service_profile_templates }}"
+    with_items: "{{ ucs_service_profile_templates }}"
 
   - name: Configure Service Profiles from Templates
     ucs_service_profile_from_template:
@@ -59,4 +66,4 @@
       user_label: "{{ item.user_label | default(omit) }}"
       power_state: "{{ item.power_state | default(omit) }}"
     when: item.name is defined
-    with_items: "{{ ucs_servers_data.service_profiles_from_templates }}"
+    with_items: "{{ ucs_service_profiles_from_templates }}"
