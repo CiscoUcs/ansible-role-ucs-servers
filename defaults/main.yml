@@ -11,53 +11,118 @@ ucs_password: C1sco12345
 ucs_state: present
 
 # Docker EE CVD Server related settings
-ucs_servers_data:
-  uuid_pools:
-  - name: UUID-Pool
-    order: sequential
-    first_uuid: 0000-000000000001
-    last_uuid: 0000-000000000078
-  service_profile_templates:
-  - name: Docker-Host-FC-A
-    template_type: updating-template
-    uuid_pool: UUID-Pool
-    lan_connectivity_policy: Cntr-FC-Boot
-    san_connectivity_policy: Cntr-FC-Boot
-    boot_policy: Boot-FC-Cntr
-    maintenance_policy: default
-    server_pool: Container-Pool
-    power_state: down
-    host_firmware_package: default
-    bios_policy: Cntr-Host
-    power_control_policy: No-Power-Cap
-  service_profiles_from_templates:
-  - name: Docker-Host-01
-    source_template: Docker-Host-FC-A
-    user_label: UCP-Ctrl-1
-  - name: Docker-Host-02
-    source_template: Docker-Host-FC-A
-    user_label: UCP-Ctrl-2
-  - name: Docker-Host-03
-    source_template: Docker-Host-FC-A
-    user_label: UCP-Ctrl-3
-  - name: Docker-Host-04
-    source_template: Docker-Host-FC-A
-    user_label: UCP-DTR-1
-  - name: Docker-Host-05
-    source_template: Docker-Host-FC-A
-    user_label: UCP-DTR-2
-  - name: Docker-Host-06
-    source_template: Docker-Host-FC-A
-    user_label: UCP-DTR-3
-  - name: Docker-Host-07
-    source_template: Docker-Host-FC-A
-    user_label: UCP-Node-1
-  - name: Docker-Host-08
-    source_template: Docker-Host-FC-A
-    user_label: UCP-Node-2
-  - name: Docker-Host-09
-    source_template: Docker-Host-FC-A
-    user_label: UCP-Node-3
-  - name: Docker-Host-10
-    source_template: Docker-Host-FC-A
-    user_label: UCP-Node-4
+ucs_boot_policies:
+- objects:
+  - {
+        "module": "ucsmsdk.mometa.lsboot.LsbootPolicy",
+        "class": "LsbootPolicy",
+        "properties": {
+            "parent_mo_or_dn": "org-root",
+            "boot_mode": "legacy",
+            "enforce_vnic_name": "yes",
+            "name": "DEE-vMedia",
+            "reboot_on_update": "no"
+        },
+        "children": [
+            {
+                "module": "ucsmsdk.mometa.lsboot.LsbootVirtualMedia",
+                "class": "LsbootVirtualMedia",
+                "properties": {
+                    "access": "read-write-remote-cimc",
+                    "lun_id": "0",
+                    "order": "3"
+                }
+            },
+            {
+                "module": "ucsmsdk.mometa.lsboot.LsbootVirtualMedia",
+                "class": "LsbootVirtualMedia",
+                "properties": {
+                    "access": "read-only-remote-cimc",
+                    "lun_id": "0",
+                    "order": "2"
+                }
+            },
+            {
+                "module": "ucsmsdk.mometa.lsboot.LsbootStorage",
+                "class": "LsbootStorage",
+                "properties": {
+                    "order": "1"
+                },
+                "children": [
+                    {
+                        "module": "ucsmsdk.mometa.lsboot.LsbootLocalStorage",
+                        "class": "LsbootLocalStorage",
+                        "properties": {},
+                        "children": [
+                            {
+                                "module": "ucsmsdk.mometa.lsboot.LsbootLocalHddImage",
+                                "class": "LsbootLocalHddImage",
+                                "properties": {
+                                    "order": "1",
+                                },
+                                "children": [
+                                    {
+                                        "module": "ucsmsdk.mometa.lsboot.LsbootLocalLunImagePath",
+                                        "class": "LsbootLocalLunImagePath",
+                                        "properties": {
+                                            "lun_name": "Boot-LUN",
+                                            "type": "primary"
+                                        }
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+ucs_uuid_pools:
+- name: UUID-Pool
+  order: sequential
+  first_uuid: 0000-000000000001
+  last_uuid: 0000-000000000078
+ucs_service_profile_templates:
+- name: Docker-Host-FC-A
+  template_type: updating-template
+  uuid_pool: UUID-Pool
+  lan_connectivity_policy: Cntr-FC-Boot
+  san_connectivity_policy: Cntr-FC-Boot
+  boot_policy: Boot-FC-Cntr
+  maintenance_policy: default
+  server_pool: Container-Pool
+  power_state: down
+  host_firmware_package: default
+  bios_policy: Cntr-Host
+  power_control_policy: No-Power-Cap
+ucs_service_profiles_from_templates:
+- name: Docker-Host-01
+  source_template: Docker-Host-FC-A
+  user_label: UCP-Ctrl-1
+- name: Docker-Host-02
+  source_template: Docker-Host-FC-A
+  user_label: UCP-Ctrl-2
+- name: Docker-Host-03
+  source_template: Docker-Host-FC-A
+  user_label: UCP-Ctrl-3
+- name: Docker-Host-04
+  source_template: Docker-Host-FC-A
+  user_label: UCP-DTR-1
+- name: Docker-Host-05
+  source_template: Docker-Host-FC-A
+  user_label: UCP-DTR-2
+- name: Docker-Host-06
+  source_template: Docker-Host-FC-A
+  user_label: UCP-DTR-3
+- name: Docker-Host-07
+  source_template: Docker-Host-FC-A
+  user_label: UCP-Node-1
+- name: Docker-Host-08
+  source_template: Docker-Host-FC-A
+  user_label: UCP-Node-2
+- name: Docker-Host-09
+  source_template: Docker-Host-FC-A
+  user_label: UCP-Node-3
+- name: Docker-Host-10
+  source_template: Docker-Host-FC-A
+  user_label: UCP-Node-4
